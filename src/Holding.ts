@@ -13,7 +13,11 @@ export type HoldingDetails = {
   deposited: number
   withdrawn: number
 }
-const holdingDetailsInitialValue: HoldingDetails = {valorisation: 0, deposited: 0, withdrawn: 0}
+export const holdingDetailsInitialValue: HoldingDetails = {valorisation: 0, deposited: 0, withdrawn: 0}
+export function isHoldingDetails(toCheck: any): toCheck is HoldingDetails {
+  return typeof toCheck === "object" && 
+    (toCheck as HoldingDetails).valorisation !== undefined && toCheck.deposited !== undefined && toCheck.withdrawn !== undefined
+}
 
 export function holdingDetails(transactions: Transaction[], scpis: SCPIData[]): HoldingDetails | Error {
   const findSCPIByName = (name: string) => scpis.find(s => s.name === name)
