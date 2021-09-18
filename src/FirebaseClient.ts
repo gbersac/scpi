@@ -3,16 +3,6 @@ import React, { useContext } from 'react'
 import { initializeApp } from "firebase/app"
 import { getDatabase, Database, ref, DatabaseReference, onValue } from "firebase/database"
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAlNcuzjG0tVfPWFcDPP293GEv6LEVse1E",
-  authDomain: "test2-fd6d9.firebaseapp.com",
-  databaseURL: "https://test2-fd6d9-default-rtdb.firebaseio.com",
-  projectId: "test2-fd6d9",
-  storageBucket: "test2-fd6d9.appspot.com",
-  messagingSenderId: "419591498174",
-  appId: "1:419591498174:web:dcb06a36f48c4270e8b1ef"
-}
-
 /**
  * Convert an object whose properties are a list of (key -> object of type A) 
  * to a list of object of type A with the property (`keyName` -> key)
@@ -55,8 +45,8 @@ export class FirebaseClient {
   private scpiRef: DatabaseReference
   private transactionRef: DatabaseReference
 
-  constructor() {
-    const app = initializeApp(firebaseConfig);
+  constructor(config: object) {
+    const app = initializeApp(config);
     this.db = getDatabase(app)
     this.scpiRef = ref(this.db, 'scpiData')
     this.transactionRef = ref(this.db, 'transactions')
@@ -79,9 +69,4 @@ export class FirebaseClient {
     )    
   }
 
-}
-
-const FirebaseContext = React.createContext(new FirebaseClient())
-export default function useFirebase(): FirebaseClient {
-  return useContext(FirebaseContext)
 }

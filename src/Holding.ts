@@ -1,4 +1,4 @@
-import { SCPIData, Transaction } from "./useFirebase";
+import { SCPIData, Transaction } from "./FirebaseClient";
 
 export type TransactionDetails = {
   id: number

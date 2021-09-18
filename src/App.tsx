@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
 import { HoldingDetails, holdingDetails, holdingDetailsInitialValue, isHoldingDetails } from './Holding';
-import useFirebase, { SCPIData, Transaction } from './useFirebase';
+import { SCPIData, Transaction, FirebaseClient } from './FirebaseClient';
+import firebaseConfig from "./firebase.json"
 
 function Error(props: {message: string}): JSX.Element { 
   return <div>{props.message}</div>
@@ -46,14 +47,18 @@ function App(): JSX.Element {
   let [err, setErr] = useState<string | null>(null)
   const [scpi, setScpi] = useState<SCPIData[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const firebaseClient = useFirebase()
 
   useEffect(() => {
-    const close1 = firebaseClient.listenToSCPIData(setScpi, () => setErr("Connection to firebase db error"))
-    const close2 = firebaseClient.listenToTransactionData(setTransactions, () => setErr("Connection to firebase db error"))
-    return () => {
-      close1()
-      close2()
+    try {
+      const firebaseClient = new FirebaseClient(firebaseConfig)
+      const close1 = firebaseClient.listenToSCPIData(setScpi, () => setErr("Connection to firebase db error"))
+      const close2 = firebaseClient.listenToTransactionData(setTransactions, () => setErr("Connection to firebase db error"))
+      return () => {
+        close1()
+        close2()
+      }
+    } catch (exp: any) {
+      setErr(exp.toString())
     }
   }, [])
 
