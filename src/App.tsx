@@ -43,32 +43,31 @@ function Dashboard(props: { list: SCPIData[], transactions: Transaction[], holdi
 }
 
 function App(): JSX.Element {
-  const [err, setErr] = useState<string | null>(null)
+  let [err, setErr] = useState<string | null>(null)
   const [scpi, setScpi] = useState<SCPIData[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [holding, setHolding] = useState<HoldingDetails>(holdingDetailsInitialValue)
   const firebaseClient = useFirebase()
 
   useEffect(() => {
     const close1 = firebaseClient.listenToSCPIData(setScpi, () => setErr("Connection to firebase db error"))
     const close2 = firebaseClient.listenToTransactionData(setTransactions, () => setErr("Connection to firebase db error"))
-    const details = holdingDetails(transactions, scpi)
-    isHoldingDetails(details) ? setHolding(details) : setErr(details.message)
     return () => {
       close1()
       close2()
     }
   }, [])
 
-  console.log("SCPI:", JSON.stringify(scpi))
-  console.log("transactions:", JSON.stringify(transactions))
-  console.log("holding:", JSON.stringify(holdingDetails(transactions, scpi)))
+  let holding = holdingDetailsInitialValue
+  if (transactions.length > 0 && scpi.length > 0) {
+    const details = holdingDetails(transactions, scpi)
+    isHoldingDetails(details) ? holding = details : err = details.message
+  }
 
   return (
     <div className="App">
       {err ? <Error message={err}/> : <Dashboard list={scpi} transactions={transactions} holding={holding} /> }
     </div>
-  );
+  )
 }
 
 export default App;
