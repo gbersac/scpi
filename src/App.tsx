@@ -14,7 +14,9 @@ function Dashboard(props: { list: SCPIData[], transactions: Transaction[], holdi
     <div style={{display: "flex", justifyContent: "space-around"}}>
       <div>Valeur totale<br/>{props.holding.valorisation}€</div>
       <div>Plus value<br/>{props.holding.valorisation - props.holding.deposited}€</div>
-      <div>Valorisation du capital<br/>{Math.round((props.holding.valorisation / props.holding.deposited - 1) * 10000) / 100} %</div>
+      <div>Valorisation du capital<br/>
+        {props.holding.deposited ? Math.round((props.holding.valorisation / props.holding.deposited - 1) * 10000) / 100 : "-"} %
+      </div>
       <div>Revenus nets versés<br/>{props.holding.withdrawn}€</div>
     </div>
     <br/>

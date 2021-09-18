@@ -1,5 +1,3 @@
-import React, { useContext } from 'react'
-
 import { initializeApp } from "firebase/app"
 import { getDatabase, Database, ref, DatabaseReference, onValue } from "firebase/database"
 
@@ -11,7 +9,7 @@ import { getDatabase, Database, ref, DatabaseReference, onValue } from "firebase
  * @returns A list of object of type A with the property (`keyName` -> key)
  */
 function dbReturnToList<A, K extends string>(input: { [s: string]: A } | undefined, keyName: K): (A & {[P in K]: string})[] {
-  if (input === undefined)
+  if (input === undefined || input === null)
     return []
   return Object.entries(input)
     .map(a => {
