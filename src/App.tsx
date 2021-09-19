@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
-import { HoldingDetails, holdingDetails, holdingDetailsInitialValue, isHoldingDetails } from './Holding';
+import { capitalAppreciation, HoldingDetails, holdingDetails, holdingDetailsInitialValue, isHoldingDetails } from './Holding';
 import { SCPIData, Transaction, FirebaseClient } from './FirebaseClient';
 import firebaseConfig from "./firebase.json"
 
@@ -9,13 +9,14 @@ function Error(props: {message: string}): JSX.Element {
 }
 
 function Dashboard(props: { list: SCPIData[], transactions: Transaction[], holding: HoldingDetails}): JSX.Element {
+  const capp = capitalAppreciation(props.holding)
   return <div>
     <h1>Votre patrimoine immobilier</h1>
     <div style={{display: "flex", justifyContent: "space-around"}}>
       <div>Valeur totale<br/>{props.holding.valorisation}€</div>
-      <div>Plus value<br/>{props.holding.valorisation - props.holding.deposited}€</div>
+      <div>Plus value<br/>{capp === null ? "-" : `${Math.round(capp * 100) / 100}€`}</div>
       <div>Valorisation du capital<br/>
-        {props.holding.deposited ? Math.round((props.holding.valorisation / props.holding.deposited - 1) * 10000) / 100 : "-"} %
+        {capp === null ? "-" : `${Math.round(capp / props.holding.deposited * 10000) / 100}%`}
       </div>
       <div>Revenus nets versés<br/>{props.holding.withdrawn}€</div>
     </div>
@@ -35,7 +36,7 @@ function Dashboard(props: { list: SCPIData[], transactions: Transaction[], holdi
         {props.transactions.map(t =>
           <tr key={t.id}>
             <td>{t.id}</td>
-            <td>{t.amount}</td>
+            <td>{t.nbShares > 0 ? t.amount : -t.amount}</td>
             <td>{t.scpi}</td>
             <td>Confirmé</td>
           </tr>
@@ -64,7 +65,7 @@ function App(): JSX.Element {
     }
   }, [])
 
-  let holding = holdingDetailsInitialValue
+  let holding = holdingDetailsInitialValue()
   if (transactions.length > 0 && scpi.length > 0) {
     const details = holdingDetails(transactions, scpi)
     isHoldingDetails(details) ? holding = details : err = details.message

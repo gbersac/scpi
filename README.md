@@ -11,3 +11,5 @@
 You can test the application with `npm test`
 
 PS: the application update the infos in real time.
+
+PS2: the formula to compute capital appreciation may not be the one you expected
